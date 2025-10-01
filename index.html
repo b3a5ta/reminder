@@ -3,262 +3,328 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
     <title>Reminder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <style>
-        * {
+        :root {
+            --pink: #ff5eae;
+            --rose: #ffe3ef;
+            --fond-white: #fffafc;
+            --glass: rgba(255,255,255,0.5);
+            --blur: blur(18px);
+            --box-shadow: 0 8px 32px 0 rgba(101, 67, 133, 0.18);
+        }
+        *,
+        *::before,
+        *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Dancing Script', 'Arial', sans-serif;
-            transition: all 0.3s ease;
+            font-family: 'Dancing Script', 'Arial Rounded MT Bold', Arial, sans-serif;
         }
-
+        html, body {
+            height: 100%;
+        }
         body {
+            min-height: 100vh;
+            width: 100vw;
+            overflow-x: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #ffe3ef 0%, #ffb4e1 100%);
+            transition: background 1.2s;
+        }
+        .heart-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .falling-heart {
+            position: absolute;
+            color: var(--pink);
+            opacity: 0.19;
+            font-size: 1.5rem;
+            filter: blur(0.5px);
+            animation: fallingHeart 9s linear infinite;
+        }
+        @keyframes fallingHeart {
+            0% { transform: translateY(-8vh) scale(1) rotate(0deg);}
+            70% { opacity: 0.25;}
+            100% { transform: translateY(110vh) scale(1.8) rotate(360deg);}
+        }
+        .main-content {
+            z-index: 2;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 90vh;
+            width: 100vw;
+        }
+        .gift-card {
+            background: var(--glass);
+            box-shadow: var(--box-shadow);
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            border-radius: 26px;
+            padding: 2.7rem 1.6rem 2rem 1.6rem;
+            width: 95vw;
+            max-width: 410px;
+            position: relative;
+            text-align: center;
+            margin: 0 auto;
+            transition: box-shadow 0.4s;
+        }
+        .gift-card.active {
+            box-shadow: 0 0 0 0 #ffaad5, 0 8px 40px 0 rgba(255, 94, 174, 0.27);
+        }
+        .gift-box-btn {
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            background-color: #fff5f5;
-            overflow: hidden;
-        }
-
-        .container {
-            text-align: center;
+            background: linear-gradient(120deg, #ff5eae 10%, #ffb4e1 100%);
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 14px auto;
+            font-size: 3.8rem;
+            border-radius: 30px;
+            box-shadow: 0 4px 16px 0 rgba(255, 94, 174, 0.09);
             position: relative;
-            width: 100%;
-            max-width: 400px;
-            padding: 20px;
-        }
-
-        .gift-box {
-            font-size: 100px;
             cursor: pointer;
-            position: relative;
-            display: inline-block;
-            margin-bottom: 20px;
-            transform: scale(1);
-            animation: float 2s ease-in-out infinite;
+            overflow: visible;
+            transition: transform 0.21s, box-shadow 0.5s;
+            border: 0;
+            outline: none;
         }
-
-        .gift-box:hover {
-            transform: scale(1.05);
+        .gift-box-btn:hover,
+        .gift-box-btn:active {
+            transform: scale(1.05) rotate(-3deg);
+            box-shadow: 0 4px 28px 0 rgba(255, 94, 174, 0.25);
         }
-
+        .gift-top {
+            position: absolute;
+            left: 50%; top: 16%;
+            transform: translateX(-50%);
+            font-size: 2.6rem;
+            color: #fc378d;
+            z-index: 2;
+            opacity: 0.85;
+            pointer-events: none;
+            animation: wiggle 2.1s ease-in-out infinite;
+        }
+        @keyframes wiggle {
+            0%,100%{transform: translateX(-50%) rotate(-6deg);}
+            40%{transform:translateX(-50%) rotate(2deg);}
+            70%{transform:translateX(-50%) rotate(8deg);}
+        }
         .love-symbol {
             position: absolute;
-            top: -20px;
-            left: 50%;
+            left: 50%; top: -25px;
             transform: translateX(-50%);
-            font-size: 30px;
-            color: #ff4081;
+            font-size: 2.1rem;
+            color: #ff5eae;
             opacity: 0;
             transition: opacity 0.3s;
         }
-
-        .gift-box:hover .love-symbol {
+        .gift-box-btn:hover .love-symbol {
             opacity: 1;
         }
-
-        .letter {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            width: 90%;
-            max-width: 350px;
-            background-color: white;
-            border-radius: 10px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.2);
-            z-index: 10;
-            opacity: 0;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .letter.show {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
-        }
-
-        .letter-header {
-            color: #ff4081;
-            margin-bottom: 15px;
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .lines {
-            margin-top: -20px;
-            opacity: 0.4;
-            color: #ff4081;
-        }
-
-        .letter-content {
-            color: #555;
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-
-        .letter-content p{
-            text-align: justify;
-            font-size: 17px;
-        }
-
-        .letter-footer {
-            font-style: normal;
-            color: #ff4081;
-            margin-top: 15px;
-        }
-
+        .letter-modal,
         .overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 0, 0, 0.5);
-            z-index: 5;
+            top: 0; left: 0; right: 0; bottom: 0;
+            width: 100vw; height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 50;
             opacity: 0;
             pointer-events: none;
+            transition: opacity 0.3s;
         }
-
-        .overlay.show {
+        .overlay.show,
+        .letter-modal.show {
             opacity: 1;
             pointer-events: all;
         }
-
+        .overlay {
+            background: rgba(255, 94, 174, 0.19);
+            backdrop-filter: blur(2px);
+        }
+        .letter-content-box {
+            padding: 1.9rem 1.2rem 1.5rem 1.2rem;
+            background: rgba(255,255,255,0.83);
+            border-radius: 22px;
+            max-width: 370px;
+            width: 88vw;
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            position: relative;
+            z-index: 80;
+            animation: popLetter 0.42s cubic-bezier(.23,1.02,.55,.99);
+        }
+        @keyframes popLetter {
+            0% { opacity: 0; transform: scale(.72);}
+            97% { opacity: 1; transform: scale(1.03);}
+            100%{ opacity:1; transform: scale(1);}
+        }
+        .letter-header {
+            color: #ff5eae;
+            font-family: 'Dancing Script', cursive;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+            letter-spacing: 0.5px;
+        }
+        .letter-divider {
+            color: #ff5eae;
+            opacity: .52;
+            margin: 0 auto 0.8rem auto;
+            width: 60%;
+            font-size: 1.21rem;
+            height: 0.9rem;
+        }
+        .letter-body {
+            color: #933f80;
+            font-size: 1.13rem;
+            line-height: 1.65;
+            text-align: justify;
+            margin-bottom: 1rem;
+            font-family: 'Arial Rounded MT Bold', Arial, sans-serif;
+        }
+        .letter-footer {
+            color: #ff4081;
+            font-style: normal;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.25rem;
+            margin-top: 0.9rem;
+        }
+        /* Floating hearts animation */
         .emoji {
             position: absolute;
-            font-size: 30px;
+            font-size: 1.7rem;
             opacity: 0;
-            z-index: 2;
             pointer-events: none;
+            z-index: 200;
+            will-change: transform,opacity;
+            animation: emojiFloat 5s forwards cubic-bezier(.44,.01,.85,1);
         }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-15px);
-            }
-        }
-
         @keyframes emojiFloat {
-            0% {
-                transform: translateY(0) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-100px) rotate(20deg);
-                opacity: 0;
-            }
+            0% { opacity:1; transform:translateY(0) scale(1);}
+            80% { opacity: .69; transform: translateY(-65px) scale(1.19);}
+            100% { opacity:0; transform:translateY(-110px) scale(0.78);}
         }
-
-        .heart-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: -1;
+        /* Responsive tweaks */
+        @media (max-width: 540px) {
+            .gift-card { padding: 1.5rem 0.6rem 1.5rem 0.6rem; }
+            .gift-box-btn { width: 80px; height: 80px; font-size: 2.4rem;}
+            .letter-header{font-size:1.4rem;}
+            .letter-content-box{padding:1rem;}
         }
-
-        .heart {
-            position: absolute;
-            font-size: 20px;
-            color: rgba(255, 64, 129, 0.3);
-            animation: falling 10s linear infinite;
+        @media (max-height: 640px){
+            .main-content{min-height:70vh;}
         }
-
-        @keyframes falling {
-            0% {
-                transform: translateY(-10vh) rotate(0deg);
-            }
-            100% {
-                transform: translateY(100vh) rotate(360deg);
-            }
+        /* Hide scrollbar in letter */
+        .letter-content-box::-webkit-scrollbar{
+            width: 0.1rem; background: transparent;
         }
     </style>
 </head>
 <body>
     <div class="heart-bg" id="heartBg"></div>
-
-    <div class="container">
-        <div class="gift-box" id="giftBox">
-            🎁
-            <div class="love-symbol">❤</div>
-        </div>
-    </div>
-
+    <main class="main-content">
+        <section class="gift-card" id="giftCard">
+            <button class="gift-box-btn" id="giftBox" aria-label="Open Gift">
+                🎁
+                <div class="gift-top" aria-hidden="true">🎀</div>
+                <div class="love-symbol" aria-hidden="true">❤</div>
+            </button>
+            <div style="font-size: 1.23rem; color: #b23763; margin-top: 0.3em;">
+                <span style="font-family:'Dancing Script', cursive; font-size: 1.38rem;">A sweet reminder for you 💖</span>
+            </div>
+        </section>
+    </main>
     <div class="overlay" id="overlay"></div>
-
-    <div class="letter" id="letter">
-        <div class="letter-header">To my Devummaa</div>
-        <div class="lines">--------------------------------------</div>
-        <div class="letter-content">
-            <p>Just a gentle reminder... You are my favorite person, always have been, always will be. In every heartbeat, in every quiet thought, I choose you. Not just today, but every single day. You are my peace, my joy, my safe place, and the love of my life. My love for you isn't just a promise - it's my forever, my ultimatum, my everything. With you, I’ve found home.</p>
+    <section class="letter-modal" id="letterModal" aria-modal="true" role="dialog">
+        <div class="letter-content-box">
+            <div class="letter-header">To my Devummaa</div>
+            <div class="letter-divider">━━━━━━━━━━━━━━</div>
+            <div class="letter-body">
+                Just a gentle reminder... You are my favorite person, always have been, always will be.
+                In every heartbeat, in every quiet thought, I choose you. Not just today, but every single day.
+                You are my peace, my joy, my safe place, and the love of my life.
+                My love for you isn't just a promise – it's my forever, my ultimatum, my everything.
+                With you, I’ve found home.
+            </div>
+            <div class="letter-footer">yours <b>DADDY!</b></div>
         </div>
-        <div class="letter-footer">yours <b>DADDY!</b></div>
-    </div>
-
+    </section>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const giftBox = document.getElementById('giftBox');
-            const overlay = document.getElementById('overlay');
-            const letter = document.getElementById('letter');
+        // Heart rain background
+        function createHeartsBg() {
             const heartBg = document.getElementById('heartBg');
-
-
-
-            giftBox.addEventListener('click', function() {
-                // Change background color
-                document.body.style.backgroundColor = '#ffebee';
-
-                // Show overlay and letter
-                overlay.classList.add('show');
-                letter.classList.add('show');
-
-                // Create floating emojis
-                createEmojis();
-            });
-
-            overlay.addEventListener('click', function() {
-                // Hide overlay and letter
-                overlay.classList.remove('show');
-                letter.classList.remove('show');
-
-                // Reset background color
-                document.body.style.backgroundColor = '#fff5f5';
-            });
-
-            function createEmojis() {
-                const emojis = ['❤️'];
-                const container = document.querySelector('.container');
-
-                for (let i = 0; i < 50; i++) {
-                    const emoji = document.createElement('div');
-                    emoji.className = 'emoji';
-                    emoji.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
-                    emoji.style.left = Math.random() * 70 + 10 + '%';
-                    emoji.style.top = Math.random() * 100 + 10 + '%';
-                    container.appendChild(emoji);
-
-                    // Animate emoji
-                    setTimeout(() => {
-                        emoji.style.animation = 'emojiFloat 5s forwards';
-                    }, 50);
-
-                    // Remove emoji after animation
-                    setTimeout(() => {
-                        emoji.remove();
-                    }, 5000);
-                }
+            heartBg.innerHTML = "";
+            const width = window.innerWidth;
+            const count = Math.floor(width / 52);
+            for (let i = 0; i < count; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'falling-heart';
+                heart.style.left = `${Math.random() * 96}%`;
+                heart.style.top = `-${Math.random() * 15 + 8}vh`;
+                heart.style.fontSize = `${Math.random() * 1.5 + 1.1}rem`;
+                heart.innerHTML = ['❤️','💕','💖'][Math.floor(Math.random()*3)];
+                heart.style.animationDelay = `${Math.random()*7}s`;
+                heartBg.appendChild(heart);
             }
-        });
+        }
+        createHeartsBg();
+        window.addEventListener('resize', createHeartsBg);
+
+        // UI logic
+        const giftBox  = document.getElementById('giftBox');
+        const overlay  = document.getElementById('overlay');
+        const letter   = document.getElementById('letterModal');
+        const body     = document.body;
+        const giftCard = document.getElementById('giftCard');
+
+        function showLetter() {
+            letter.classList.add('show');
+            overlay.classList.add('show');
+            body.style.background = 'linear-gradient(135deg,#ffd6e5 0%,#fbb3e5 100%)';
+            giftCard.classList.add('active');
+            createEmojis();
+            setTimeout(()=>{ 
+                letter.querySelector('.letter-content-box').focus();
+            },400);
+        }
+        function hideLetter() {
+            letter.classList.remove('show');
+            overlay.classList.remove('show');
+            body.style.background = 'linear-gradient(135deg, #ffe3ef 0%, #ffb4e1 100%)';
+            giftCard.classList.remove('active');
+        }
+        giftBox.addEventListener('click', showLetter);
+        overlay.addEventListener('click', hideLetter);
+
+        // Floating emoji on click
+        function createEmojis() {
+            const container = document.getElementById('giftCard');
+            const emojis = ['❤️','💖','💕','💘'];
+            for(let i=0;i<33;i++) {
+                const emoji = document.createElement('div');
+                emoji.className = 'emoji';
+                emoji.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+                emoji.style.left = (Math.random()*70 + 10) + '%';
+                emoji.style.top  = (Math.random()* 36 + 18) + '%';
+                emoji.style.fontSize = (Math.random()*0.6 + 1.2) + 'rem';
+                container.appendChild(emoji);
+                setTimeout(() => { emoji.style.animation = 'emojiFloat 5s forwards'; }, 40);
+                setTimeout(() => { emoji.remove(); }, 5000);
+            }
+        }
     </script>
 </body>
 </html>
